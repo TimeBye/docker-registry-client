@@ -11,7 +11,6 @@ import (
 
 func (registry *Registry) DownloadBlob(repository string, digest digest.Digest) (io.ReadCloser, error) {
 	url := registry.url("/v2/%s/blobs/%s", repository, digest)
-	registry.Logf("registry.blob.download url=%s repository=%s digest=%s", url, repository, digest)
 
 	resp, err := registry.Client.Get(url)
 	if err != nil {
@@ -30,8 +29,6 @@ func (registry *Registry) UploadBlob(repository string, digest digest.Digest, co
 	q.Set("digest", digest.String())
 	uploadURL.RawQuery = q.Encode()
 
-	registry.Logf("registry.blob.upload url=%s repository=%s digest=%s", uploadURL, repository, digest)
-
 	upload, err := http.NewRequest("PUT", uploadURL.String(), content)
 	if err != nil {
 		return err
@@ -44,7 +41,6 @@ func (registry *Registry) UploadBlob(repository string, digest digest.Digest, co
 
 func (registry *Registry) HasBlob(repository string, digest digest.Digest) (bool, error) {
 	checkURL := registry.url("/v2/%s/blobs/%s", repository, digest)
-	registry.Logf("registry.blob.check url=%s repository=%s digest=%s", checkURL, repository, digest)
 
 	resp, err := registry.Client.Head(checkURL)
 	if resp != nil {
@@ -71,7 +67,6 @@ func (registry *Registry) HasBlob(repository string, digest digest.Digest) (bool
 
 func (registry *Registry) BlobMetadata(repository string, digest digest.Digest) (distribution.Descriptor, error) {
 	checkURL := registry.url("/v2/%s/blobs/%s", repository, digest)
-	registry.Logf("registry.blob.check url=%s repository=%s digest=%s", checkURL, repository, digest)
 
 	resp, err := registry.Client.Head(checkURL)
 	if resp != nil {
@@ -89,7 +84,6 @@ func (registry *Registry) BlobMetadata(repository string, digest digest.Digest) 
 
 func (registry *Registry) initiateUpload(repository string) (*url.URL, error) {
 	initiateURL := registry.url("/v2/%s/blobs/uploads/", repository)
-	registry.Logf("registry.blob.initiate-upload url=%s repository=%s", initiateURL, repository)
 
 	resp, err := registry.Client.Post(initiateURL, "application/octet-stream", nil)
 	if resp != nil {
